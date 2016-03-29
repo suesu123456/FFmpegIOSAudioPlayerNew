@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D060BA5419F3EC6AAB24792 /* libPods-AudioTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95AD0CB8A4B7180886AB3BE5 /* libPods-AudioTest.a */; };
 		D234ECE51CA13518003AA070 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D234ECE41CA13518003AA070 /* AudioToolbox.framework */; };
 		D234ECE71CA13524003AA070 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D234ECE61CA13524003AA070 /* Accelerate.framework */; };
 		D234ECEA1CA13571003AA070 /* KxAudioManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D234ECE91CA13571003AA070 /* KxAudioManager.m */; };
@@ -53,9 +52,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		54D83CB2C5BBD43E365B7695 /* Pods-AudioTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AudioTest.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AudioTest/Pods-AudioTest.debug.xcconfig"; sourceTree = "<group>"; };
-		95AD0CB8A4B7180886AB3BE5 /* libPods-AudioTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AudioTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B58D35AC8A69B1DB5B29A291 /* Pods-AudioTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AudioTest.release.xcconfig"; path = "Pods/Target Support Files/Pods-AudioTest/Pods-AudioTest.release.xcconfig"; sourceTree = "<group>"; };
 		D234ECE41CA13518003AA070 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		D234ECE61CA13524003AA070 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		D234ECE81CA13571003AA070 /* KxAudioManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KxAudioManager.h; sourceTree = "<group>"; };
@@ -201,7 +197,6 @@
 				D2575E601CA11EAC00EE4658 /* libswresample.a in Frameworks */,
 				D23A5E821C9FA635003AAB1A /* AVFoundation.framework in Frameworks */,
 				D2575E5D1CA11EAC00EE4658 /* libavfilter.a in Frameworks */,
-				9D060BA5419F3EC6AAB24792 /* libPods-AudioTest.a in Frameworks */,
 				D2575E5E1CA11EAC00EE4658 /* libavformat.a in Frameworks */,
 				D2575E5F1CA11EAC00EE4658 /* libavutil.a in Frameworks */,
 				D2575E611CA11EAC00EE4658 /* libswscale.a in Frameworks */,
@@ -235,18 +230,8 @@
 				D23F37901CA235A0005FD01E /* libz.tbd */,
 				D234ECE61CA13524003AA070 /* Accelerate.framework */,
 				D234ECE41CA13518003AA070 /* AudioToolbox.framework */,
-				95AD0CB8A4B7180886AB3BE5 /* libPods-AudioTest.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		C19360CE163852EC3E0DFA3A /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				54D83CB2C5BBD43E365B7695 /* Pods-AudioTest.debug.xcconfig */,
-				B58D35AC8A69B1DB5B29A291 /* Pods-AudioTest.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		D23A5E371C9FA518003AAB1A = {
@@ -257,7 +242,6 @@
 				D23A5E571C9FA518003AAB1A /* AudioTestTests */,
 				D23A5E621C9FA518003AAB1A /* AudioTestUITests */,
 				D23A5E411C9FA518003AAB1A /* Products */,
-				C19360CE163852EC3E0DFA3A /* Pods */,
 				0238F310DF3AEB29554D176F /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -501,12 +485,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D23A5E681C9FA518003AAB1A /* Build configuration list for PBXNativeTarget "AudioTest" */;
 			buildPhases = (
-				A4FE0FDEB09F7E605F79A177 /* Check Pods Manifest.lock */,
 				D23A5E3C1C9FA518003AAB1A /* Sources */,
 				D23A5E3D1C9FA518003AAB1A /* Frameworks */,
 				D23A5E3E1C9FA518003AAB1A /* Resources */,
-				549C42B4B41F7EEDDFF9D126 /* Embed Pods Frameworks */,
-				B19A83CD3AA574482FE04AB2 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -624,54 +605,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		549C42B4B41F7EEDDFF9D126 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AudioTest/Pods-AudioTest-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A4FE0FDEB09F7E605F79A177 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		B19A83CD3AA574482FE04AB2 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AudioTest/Pods-AudioTest-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D23A5E3C1C9FA518003AAB1A /* Sources */ = {
@@ -822,7 +755,6 @@
 		};
 		D23A5E691C9FA518003AAB1A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54D83CB2C5BBD43E365B7695 /* Pods-AudioTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -857,7 +789,6 @@
 		};
 		D23A5E6A1C9FA518003AAB1A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B58D35AC8A69B1DB5B29A291 /* Pods-AudioTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
