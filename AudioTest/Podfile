@@ -1,0 +1,3 @@
+target 'AudioTest' do
+	pod 'OrigamiEngine', '~> 1.0.14'
+end
