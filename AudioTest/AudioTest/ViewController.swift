@@ -8,6 +8,28 @@
 
 import UIKit
 
+func formatTimeInterval(seconds: CGFloat, isLeft: Bool) -> String {
+//    let secondsTemp = max(0, seconds)
+//    var s: Int = Int(secondsTemp)
+//    var m: Int = s / 60
+//    var h: Int = m / 60
+//    s = s % 60
+//    m = m % 60
+//    var format: NSMutableString = (isLeft && secondsTemp >= 0.5 ? "-" : "").mutableCopy() as! NSMutableString
+//    if h != 0 {
+//        format.appendFormat("%d:%0.2d", h, m)
+//    }
+//    else {
+//        format.appendFormat("%d", m)
+//    }
+//    format.appendFormat(":%0.2d", s)
+//    return format as String
+    return ""
+    
+}
+
+
+
 class ViewController: UIViewController {
 
     var decoder: KxMovieDecoder!
@@ -53,29 +75,53 @@ class ViewController: UIViewController {
     
     var songsArray: [String] = []
     var currentIndex: Int = 0
+    var lockQueue = dispatch_queue_create("com.test.LockQueue", nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
        
-        var path: String = NSBundle.mainBundle().pathForResource("越难越爱", ofType: "mp3")!
-        songsArray.append(path)
-        path = NSBundle.mainBundle().pathForResource("ss", ofType: "flac")!
-        songsArray.append(path)
+    }
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+//        let path: String = NSBundle.mainBundle().pathForResource("越难越爱", ofType: "mp3")!
+//        songsArray.append(path)
+               let path = NSBundle.mainBundle().pathForResource("ss", ofType: "flac")!
+                songsArray.append(path)
         progressSlider.autoresizingMask = .FlexibleWidth
         progressSlider.continuous = false
         progressSlider.value = 0
-        progressSlider.addTarget(self, action: "progressDidChange:", forControlEvents: .ValueChanged)
+        progressSlider.addTarget(self, action: #selector(ViewController.progressDidChange(_:)), forControlEvents: .ValueChanged)
         
         //-----
-        var audioManager = KxAudioManager.audioManager()
+        let audioManager = KxAudioManager.audioManager()
         audioManager.activateAudioSession()
         
         initSongs(songsArray[0])
+
     }
     
+    deinit {
+        self.pause()
+        if dispatchQueue != nil {
+            dispatchQueue = nil
+        }
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        if self.playing {
+            self.clear()
+            if maxBufferedDuration > 0 {
+                minBufferedDuration = 0
+                maxBufferedDuration = 0
+                self.play()
+            }else{
+                decoder.closeFile()
+            }
+        }else{
+            self.freeBufferedFrames()
+            decoder.closeFile()
+        }
         // Dispose of any resources that can be recreated.
     }
     
@@ -93,23 +139,22 @@ class ViewController: UIViewController {
         }
         
         dispatch_async(dispatch_get_global_queue(0, 0)) { [weak self]() -> Void in
-            
-            try? decoder.openFile(path)
-            
-            dispatch_sync(dispatch_get_main_queue()) { [weak self]() -> Void in
-                if let weakSelf = self {
+            if let weakSelf = self {
+               
+                try? decoder.openFile(path)
+                
+                dispatch_sync(dispatch_get_main_queue()) { () -> Void in
                     weakSelf.setingDecoder(decoder)
                     
                 }
+
             }
-            
             
         }
     }
    
     
     func setingDecoder(decoder: KxMovieDecoder) {
-        
         
         self.decoder = decoder
         self.moviePosition = decoder.position
@@ -120,7 +165,7 @@ class ViewController: UIViewController {
         }
         minBufferedDuration = 0.2
         maxBufferedDuration = 0.4
-        if decoder.validAudio {
+        if !decoder.validVideo {
             minBufferedDuration *= 10.0
         }
         if parameters.count > 0 {
@@ -141,8 +186,11 @@ class ViewController: UIViewController {
             }
         
         }
-        print("buffered limit: %.1f - %.1f,\(minBufferedDuration)----\(minBufferedDuration)")
-        self.restorePlay()
+//        print("buffered limit: %.1f - %.1f,\(minBufferedDuration)----\(minBufferedDuration)")
+        if self.isViewLoaded() {
+            self.restorePlay()
+        }
+        
         //设置信息
         var title =  self.decoder.info["metadata"]!["title"] as? String
         if title == nil {
@@ -171,32 +219,13 @@ class ViewController: UIViewController {
         
 
     }
-    func formatTimeInterval(seconds: CGFloat, isLeft: Bool) -> String {
-        let secondsTemp = max(0, seconds)
-        var s: Int = Int(secondsTemp)
-        var m: Int = s / 60
-        var h: Int = m / 60
-        s = s % 60
-        m = m % 60
-        var format: NSMutableString = (isLeft && secondsTemp >= 0.5 ? "-" : "").mutableCopy() as! NSMutableString
-        if h != 0 {
-            format.appendFormat("%d:%0.2d", h, m)
-        }
-        else {
-            format.appendFormat("%d", m)
-        }
-        format.appendFormat(":%0.2d", s)
-        return format as String
-        
-    }
-    
     func restorePlay() {
         let n = gHistory.valueForKey(self.decoder!.path)
-//        if (n != nil) {
-//            
-//        }else{
+        if (n != nil) {
+            self.updatePosition(n!.floatValue, playMode: true)
+        }else{
             self.play()
-//        }
+        }
         
     }
     func play() {
@@ -207,49 +236,50 @@ class ViewController: UIViewController {
         self.interrupted = false
         self.tickCorrectionTime = 0
         self.tickCounter = 0
-        self.debugStartTime = -1
         self.asyncDecodeFrames()
-        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
-        dispatch_after(popTime, dispatch_get_main_queue()) { () -> Void in
-            self.tick()
+        let popTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
+        dispatch_after(popTime, dispatch_get_main_queue()) { [weak self]() -> Void in
+            if let weakSelf = self {
+                weakSelf.tick()
+            }
         }
         if self.decoder.validAudio {
             self.enableAudio(true)
         }
-        print("play movie")
+//        print("play movie")
         
     }
     func asyncDecodeFrames() {
         if self.decoding {
             return
         }
-        let weakSelf = self
-        let weakDecoder = self.decoder
+        
+        
         let duration: CGFloat = 0.1
         self.decoding = true
-        dispatch_async(self.dispatchQueue) { () -> Void in
-            if !weakSelf.playing {
-                return
-            }
-            var good = true
-            while(good) {
-                good = false
-                autoreleasepool({ () -> () in
-                    if weakDecoder != nil && weakDecoder.validAudio {
-                        let frames: [KxMovieFrame] = weakDecoder.decodeFrames(duration) as! [KxMovieFrame]
-                        if frames.count > 0 {
-                            good = weakSelf.addFrames(frames)
+        dispatch_async(self.dispatchQueue) { [weak self]() -> Void in
+            if let weakSelf = self {
+                if !weakSelf.playing {
+                    return
+                }
+                var good = true
+                let weakDecoder = weakSelf.decoder
+                while(good) {
+                    good = false
+                    autoreleasepool({ () -> () in
+                        if weakDecoder != nil && weakDecoder.validAudio {
+                            let frames: [KxMovieFrame] = weakDecoder.decodeFrames(duration) as! [KxMovieFrame]
+                            if frames.count > 0 {
+                                good = weakSelf.addFrames(frames)
+                            }
+                            
                         }
+                    })
                     
-                    }
-                })
-            
+                }
+                weakSelf.decoding = false
             }
-            weakSelf.decoding = false
-            
         }
-        
-    
     }
     func addFrames(frames: [KxMovieFrame]) -> Bool {
         if self.decoder.validAudio {
@@ -277,9 +307,9 @@ class ViewController: UIViewController {
                 self.audioCallbackFillData(outData, numFrames: Int(numFrames), numChannels: Int(numChannels))
             }
             audioManager.play()
-            print("audio device smr\(audioManager.samplingRate),-\(audioManager.numBytesPerSample),-\(audioManager.numOutputChannels)")
+//            print("audio device smr\(audioManager.samplingRate),-\(audioManager.numBytesPerSample),-\(audioManager.numOutputChannels)")
         }else{
-            print("audio pause")
+//            print("audio pause")
             audioManager.pause()
             audioManager.outputBlock = nil
         }
@@ -293,83 +323,112 @@ class ViewController: UIViewController {
             
             return
         }
-        while numFrames > 0 {
-            if currentAudioFrame == nil {
-                let count: Int = audioFrames.count
-                if count > 0 {
-                    var frame: KxAudioFrame = audioFrames[0] as! KxAudioFrame
-                    audioFrames.removeObjectAtIndex(0)
-                    moviePosition = frame.position
-                    bufferedDuration -= Float(frame.duration)
-                    currentAudioFramePos = 0
-                    currentAudioFrame = frame.samples
+        autoreleasepool { 
+            while numFrames > 0 {
+                if currentAudioFrame == nil {
+                    dispatch_sync(lockQueue) {
+                        let count: Int = self.audioFrames.count
+                        if count > 0 {
+                            let frame: KxAudioFrame = self.audioFrames[0] as! KxAudioFrame
+                            self.audioFrames.removeObjectAtIndex(0)
+                            self.moviePosition = frame.position
+                            self.bufferedDuration -= Float(frame.duration)
+                            self.currentAudioFramePos = 0
+                            self.currentAudioFrame = frame.samples
+                        }
+                    }
                 }
-            }
-            if (currentAudioFrame != nil) {
-                let bytes = currentAudioFrame.bytes + currentAudioFramePos
-                let bytesLeft: Int = (currentAudioFrame.length - currentAudioFramePos)
-                let frameSizeOf: Int = numChannels * sizeof(Float)
-                let bytesToCopy: Int = min(numFrames * frameSizeOf, bytesLeft)
-                let framesToCopy: Int = bytesToCopy / frameSizeOf
-                memcpy(weakOutData, bytes, bytesToCopy)
-                numFrames -= framesToCopy
-                weakOutData = weakOutData.advancedBy(framesToCopy * numChannels)
-                
-                if bytesToCopy < bytesLeft {
-                    self.currentAudioFramePos += bytesToCopy
+                if (currentAudioFrame != nil) {
+                    let bytes = currentAudioFrame.bytes + currentAudioFramePos
+                    let bytesLeft: Int = (currentAudioFrame.length - currentAudioFramePos)
+                    let frameSizeOf: Int = numChannels * sizeof(Float)
+                    let bytesToCopy: Int = min(numFrames * frameSizeOf, bytesLeft)
+                    let framesToCopy: Int = bytesToCopy / frameSizeOf
+                    memcpy(weakOutData, bytes, bytesToCopy)
+                    numFrames -= framesToCopy
+                    weakOutData = weakOutData.advancedBy(framesToCopy * numChannels)
+                    
+                    if bytesToCopy < bytesLeft {
+                        self.currentAudioFramePos += bytesToCopy
+                    }
+                    else {
+                        self.currentAudioFrame = nil
+                    }
+                    
+                }else{
+                    memset(weakOutData, 0, numFrames * numChannels * sizeof(Float))
+                    //LoggerStream(1, @"silence audio");
+                    self.debugAudioStatus = 3
+                    self.debugAudioStatusTS = NSDate()
+                    break
                 }
-                else {
-                    self.currentAudioFrame = nil
-                }
-                
-            }else{
-                memset(weakOutData, 0, numFrames * numChannels * sizeof(Float))
-                //LoggerStream(1, @"silence audio");
-                self.debugAudioStatus = 3
-                self.debugAudioStatusTS = NSDate()
-                break
             }
         }
+
+    }
+    
+    
+    func test() {
+//        var interval: NSTimeInterval = 0
+//        if !buffered {
+//            interval = self.presentFrame()
+//        }
+//        let correction: NSTimeInterval = self.tickCorrection()
+//        let time: NSTimeInterval = max(0, 0.01)
+        if decoder.isEOF {
+            return
+        }
+        print((__int64_t)(0.01 * Double(NSEC_PER_SEC)))
+        let popTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, (__int64_t)(0.01 * Double(NSEC_PER_SEC)))
+        
+        dispatch_after(popTime, dispatch_get_main_queue(), { [weak self]() -> Void in
+            if let weakSelf = self {
+                weakSelf.test()
+            }
+        })
+
     
     }
     func tick() {
         // The output below is limited by 1 KB.
         // Please Sign Up (Free!) to remove this limitation.
-        
-        if buffered && ((bufferedDuration > minBufferedDuration) || decoder.isEOF) {
-            self.tickCorrectionTime = 0
-            self.buffered = false
-        }
-        var interval: NSTimeInterval = 0
-        if !buffered {
-            
-            interval = self.presentFrame()
-        }
-        if self.playing {
-            let leftFrames: Int = (decoder.validAudio ? audioFrames.count : 0)
-            if 0 == leftFrames {
-                if decoder.isEOF {
-                    self.pause()
-                    self.updateTimer()
-                    return
-                }
-                if minBufferedDuration > 0 && !buffered {
-                    self.buffered = true
-//                    activityIndicatorView.startAnimating()
-                }
+        autoreleasepool {
+            if buffered && ((bufferedDuration > minBufferedDuration) || decoder.isEOF) {
+                self.tickCorrectionTime = 0
+                self.buffered = false
             }
-            if leftFrames <= 0 || !(bufferedDuration > minBufferedDuration) {
-                self.asyncDecodeFrames()
+            var interval: NSTimeInterval = 0
+            if !buffered {
+                interval = self.presentFrame()
             }
-            let correction: NSTimeInterval = self.tickCorrection()
-            let time: NSTimeInterval = max(interval + correction, 0.01)
-            var popTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(time) * Int64(NSEC_PER_SEC))
-            dispatch_after(popTime, dispatch_get_main_queue(), { () -> Void in
-                self.tick()
-            })
-        }
-        if (tickCounter++) % 3 == 0 {
-            self.updateTimer()
+            if self.playing {
+                let leftFrames: Int = (decoder.validAudio ? audioFrames.count : 0)
+                if leftFrames == 0 {
+                    if decoder.isEOF {
+                        self.pause()
+                        self.updateTimer()
+                        return
+                    }
+                    if minBufferedDuration > 0 && !buffered {
+                        self.buffered = true
+                    }
+                }
+                if leftFrames < 0 || bufferedDuration <= minBufferedDuration {
+                    self.asyncDecodeFrames()
+                }
+                let correction: NSTimeInterval = self.tickCorrection()
+                let time: NSTimeInterval = max(interval + correction, 0.01)
+//                var popTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(time) * Int64(NSEC_PER_SEC))
+                let popTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, (__int64_t)(time * Double(NSEC_PER_SEC)))
+                dispatch_after(popTime, dispatch_get_main_queue(), { [weak self]() -> Void in
+                    if let weakSelf = self {
+                        weakSelf.tick()
+                    }
+                })
+            }
+            if ((tickCounter++ % 3) == 0) {
+                self.updateTimer()
+            }
         }
     
     }
@@ -384,12 +443,12 @@ class ViewController: UIViewController {
             return 0
         }
         let dPosition: NSTimeInterval = NSTimeInterval(moviePosition) - tickCorrectionPosition
-        var dTime: NSTimeInterval = now - tickCorrectionTime
+        let dTime: NSTimeInterval = now - tickCorrectionTime
         var correction: NSTimeInterval = dPosition - dTime
         //if ((_tickCounter % 200) == 0)
         //    LoggerStream(1, @"tick correction %.4f", correction);
         if correction > 1.0 || correction < -1.0 {
-            print("tick correction reset\(correction)")
+//            print("tick correction reset\(correction)")
             correction = 0
             self.tickCorrectionTime = 0
         }
@@ -398,10 +457,12 @@ class ViewController: UIViewController {
     
     }
     func presentFrame() -> NSTimeInterval {
-        var interval: NSTimeInterval = 0
-        
-        
-       
+        let interval: NSTimeInterval = 0
+        if decoder.validAudio {
+            if self.artworkFrame != nil {
+                self.artworkFrame = nil
+            }
+        }
         if self.playing && debugStartTime < 0 {
             self.debugStartTime = NSDate.timeIntervalSinceReferenceDate() - NSTimeInterval(moviePosition)
         }
@@ -457,10 +518,14 @@ class ViewController: UIViewController {
     
     }
     func freeBufferedFrames() {
-        audioFrames.removeAllObjects()
-        currentAudioFrame = nil
-        if subtitles != nil {
-            subtitles.removeAllObjects()
+        dispatch_sync(lockQueue) {
+            self.audioFrames.removeAllObjects()
+            self.currentAudioFrame = nil
+        }
+        dispatch_sync(lockQueue) {
+            if self.subtitles != nil {
+                self.subtitles.removeAllObjects()
+            }
         }
         bufferedDuration = 0
     
@@ -485,7 +550,7 @@ class ViewController: UIViewController {
     }
     @IBAction func pre(sender: AnyObject) {
         if currentIndex > 0 {
-            currentIndex--
+            currentIndex -= 1
             clear()
             initSongs(songsArray[currentIndex])
         }
@@ -494,7 +559,7 @@ class ViewController: UIViewController {
     
     @IBAction func next(sender: AnyObject) {
         if currentIndex < songsArray.count - 1 {
-            currentIndex++
+            currentIndex += 1
             clear()
             initSongs(songsArray[currentIndex])
         }

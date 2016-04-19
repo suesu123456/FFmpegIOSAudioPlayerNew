@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D234ECE51CA13518003AA070 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D234ECE41CA13518003AA070 /* AudioToolbox.framework */; };
-		D234ECE71CA13524003AA070 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D234ECE61CA13524003AA070 /* Accelerate.framework */; };
 		D234ECEA1CA13571003AA070 /* KxAudioManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D234ECE91CA13571003AA070 /* KxAudioManager.m */; };
 		D23A5E441C9FA518003AAB1A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23A5E431C9FA518003AAB1A /* AppDelegate.swift */; };
 		D23A5E461C9FA518003AAB1A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23A5E451C9FA518003AAB1A /* ViewController.swift */; };
@@ -17,7 +15,6 @@
 		D23A5E4E1C9FA518003AAB1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D23A5E4C1C9FA518003AAB1A /* LaunchScreen.storyboard */; };
 		D23A5E591C9FA518003AAB1A /* AudioTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23A5E581C9FA518003AAB1A /* AudioTestTests.swift */; };
 		D23A5E641C9FA518003AAB1A /* AudioTestUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23A5E631C9FA518003AAB1A /* AudioTestUITests.swift */; };
-		D23A5E821C9FA635003AAB1A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23A5E811C9FA635003AAB1A /* AVFoundation.framework */; };
 		D23F378E1CA22A71005FD01E /* KxMovieDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = D23F378D1CA22A71005FD01E /* KxMovieDecoder.m */; };
 		D23F37911CA235A0005FD01E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F37901CA235A0005FD01E /* libz.tbd */; };
 		D23F37931CA235A8005FD01E /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F37921CA235A8005FD01E /* libbz2.tbd */; };
@@ -29,7 +26,7 @@
 		D2575E5D1CA11EAC00EE4658 /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2575E561CA11EAC00EE4658 /* libavfilter.a */; };
 		D2575E5E1CA11EAC00EE4658 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2575E571CA11EAC00EE4658 /* libavformat.a */; };
 		D2575E5F1CA11EAC00EE4658 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2575E581CA11EAC00EE4658 /* libavutil.a */; };
-		D2575E601CA11EAC00EE4658 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2575E591CA11EAC00EE4658 /* libswresample.a */; };
+		D2575E601CA11EAC00EE4658 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2575E591CA11EAC00EE4658 /* libswresample.a */; settings = {ATTRIBUTES = (Required, ); }; };
 		D2575E611CA11EAC00EE4658 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2575E5A1CA11EAC00EE4658 /* libswscale.a */; };
 		D2575E661CA1273F00EE4658 /* AudioDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2575E651CA1273F00EE4658 /* AudioDecoder.swift */; };
 /* End PBXBuildFile section */
@@ -69,7 +66,6 @@
 		D23A5E5F1C9FA518003AAB1A /* AudioTestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AudioTestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23A5E631C9FA518003AAB1A /* AudioTestUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTestUITests.swift; sourceTree = "<group>"; };
 		D23A5E651C9FA518003AAB1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D23A5E811C9FA635003AAB1A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D23F378C1CA22A71005FD01E /* KxMovieDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KxMovieDecoder.h; sourceTree = "<group>"; };
 		D23F378D1CA22A71005FD01E /* KxMovieDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KxMovieDecoder.m; sourceTree = "<group>"; };
 		D23F378F1CA22A98005FD01E /* KxLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KxLogger.h; sourceTree = "<group>"; };
@@ -192,10 +188,7 @@
 				D23F37951CA235AF005FD01E /* libiconv.tbd in Frameworks */,
 				D23F37931CA235A8005FD01E /* libbz2.tbd in Frameworks */,
 				D23F37911CA235A0005FD01E /* libz.tbd in Frameworks */,
-				D234ECE71CA13524003AA070 /* Accelerate.framework in Frameworks */,
-				D234ECE51CA13518003AA070 /* AudioToolbox.framework in Frameworks */,
 				D2575E601CA11EAC00EE4658 /* libswresample.a in Frameworks */,
-				D23A5E821C9FA635003AAB1A /* AVFoundation.framework in Frameworks */,
 				D2575E5D1CA11EAC00EE4658 /* libavfilter.a in Frameworks */,
 				D2575E5E1CA11EAC00EE4658 /* libavformat.a in Frameworks */,
 				D2575E5F1CA11EAC00EE4658 /* libavutil.a in Frameworks */,
@@ -237,7 +230,6 @@
 		D23A5E371C9FA518003AAB1A = {
 			isa = PBXGroup;
 			children = (
-				D23A5E811C9FA635003AAB1A /* AVFoundation.framework */,
 				D23A5E421C9FA518003AAB1A /* AudioTest */,
 				D23A5E571C9FA518003AAB1A /* AudioTestTests */,
 				D23A5E621C9FA518003AAB1A /* AudioTestUITests */,
@@ -769,6 +761,7 @@
 					"$(PROJECT_DIR)/AudioTest/FFmpeg-iOS/include",
 				);
 				INFOPLIST_FILE = AudioTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -777,6 +770,7 @@
 					"$(PROJECT_DIR)/AudioTest/KSAudioPlayer/bass/plugins/bassopus",
 					"$(PROJECT_DIR)/AudioTest/KSAudioPlayer/bass/plugins/basswv",
 					"$(PROJECT_DIR)/AudioTest/FFmpeg-iOS/lib",
+					"$(PROJECT_DIR)",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
@@ -784,6 +778,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "AudioTest/AudioTest-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -802,6 +797,7 @@
 					"$(PROJECT_DIR)/AudioTest/FFmpeg-iOS/include",
 				);
 				INFOPLIST_FILE = AudioTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -810,11 +806,13 @@
 					"$(PROJECT_DIR)/AudioTest/KSAudioPlayer/bass/plugins/bassopus",
 					"$(PROJECT_DIR)/AudioTest/KSAudioPlayer/bass/plugins/basswv",
 					"$(PROJECT_DIR)/AudioTest/FFmpeg-iOS/lib",
+					"$(PROJECT_DIR)",
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = sue.AudioTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "AudioTest/AudioTest-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
